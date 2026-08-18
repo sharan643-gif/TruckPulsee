@@ -1,0 +1,458 @@
+/* ═══════════════════════════════════════════════════════════════
+   MAP — Map container and custom marker styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Map Container ─── */
+.map-container {
+  position: relative;
+  height: calc(100dvh - var(--status-height) - var(--nav-height) - var(--safe-bottom) - var(--space-8));
+  min-height: 400px;
+  width: 100%;
+}
+
+.fleet-map,
+.fuel-map,
+.mechanics-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Map Controls ─── */
+.map-controls {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: var(--z-overlay);
+}
+
+.map-ctrl-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(18, 18, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              background var(--duration-fast);
+}
+
+.map-ctrl-btn:active {
+  transform: scale(0.9);
+  background: rgba(18, 18, 26, 0.95);
+}
+
+/* ─── Custom Vehicle Marker ─── */
+.vehicle-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+.vehicle-marker-inner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0a0a0f;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.vehicle-marker:hover .vehicle-marker-inner {
+  transform: scale(1.2);
+}
+
+.vehicle-marker-inner.good {
+  background: linear-gradient(135deg, #6ee7b7, #34d399);
+}
+
+.vehicle-marker-inner.warning {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+.vehicle-marker-inner.critical {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  animation: pulse-critical 1.5s infinite;
+}
+
+/* Pulse ring for alerts */
+.vehicle-marker-pulse {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: marker-pulse 2s infinite;
+  z-index: 1;
+  opacity: 0;
+}
+
+.vehicle-marker.critical .vehicle-marker-pulse {
+  border-color: var(--status-critical);
+  opacity: 1;
+}
+
+.vehicle-marker.warning .vehicle-marker-pulse {
+  border-color: var(--status-warning);
+  opacity: 1;
+}
+
+/* Glow effect for critical markers */
+.vehicle-marker-glow {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 0;
+  filter: blur(8px);
+}
+
+.vehicle-marker.critical .vehicle-marker-glow {
+  background: rgba(239, 68, 68, 0.3);
+  opacity: 1;
+  animation: glow-pulse 2s infinite;
+}
+
+/* ─── Mechanic Pin ─── */
+.mechanic-pin {
+  position: relative;
+  width: 36px;
+  height: 44px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.mechanic-pin-head {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.mechanic-pin-icon {
+  transform: rotate(45deg);
+  font-size: 14px;
+}
+
+/* Mechanic tooltip */
+.mechanic-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(18, 18, 26, 0.95);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  min-width: 180px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--duration-normal) var(--ease-out);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+}
+
+.mechanic-pin:hover .mechanic-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mechanic-tooltip-name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-1);
+}
+
+.mechanic-tooltip-spec {
+  font-size: var(--text-xs);
+  color: var(--color-text-3);
+  margin-bottom: var(--space-2);
+}
+
+.mechanic-tooltip-rating {
+  font-size: var(--text-xs);
+  color: var(--color-yellow);
+}
+
+/* ─── Fleet Map Mechanic Pin (near damaged trucks) ─── */
+.fleet-mechanic-pin {
+  position: relative;
+  width: 32px;
+  height: 40px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  animation: mechanic-drop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fleet-mechanic-pin-head {
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.5);
+  font-size: 12px;
+  animation: mechanic-glow 2s infinite;
+}
+
+.fleet-mechanic-pin-head span {
+  transform: rotate(45deg);
+  font-size: 13px;
+}
+
+/* Mechanic tooltip on fleet map */
+.fleet-mechanic-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(18, 18, 26, 0.95);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  min-width: 160px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--duration-normal) var(--ease-out);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.fleet-mechanic-pin:hover .fleet-mechanic-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.fleet-mechanic-tooltip-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.fleet-mechanic-tooltip-spec {
+  font-size: 10px;
+  color: #a1a1aa;
+  margin-bottom: 3px;
+}
+
+.fleet-mechanic-tooltip-rating {
+  font-size: 10px;
+  color: #fbbf24;
+}
+
+/* ─── Route Overlay ─── */
+.route-overlay {
+  stroke: var(--color-green);
+  stroke-width: 4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 10, 5;
+  animation: route-dash 20s linear infinite;
+}
+
+.route-overlay.suggested {
+  stroke: var(--color-blue);
+  stroke-dasharray: 8, 8;
+  opacity: 0.7;
+}
+
+/* ─── Leaflet Overrides (dark theme) ─── */
+.leaflet-container {
+  background: var(--color-bg) !important;
+  font-family: var(--font-family) !important;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: var(--shadow-md) !important;
+  border-radius: var(--radius-md) !important;
+  overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(18, 18, 26, 0.9) !important;
+  color: var(--color-text) !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 18px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(30, 30, 40, 0.95) !important;
+}
+
+.leaflet-control-zoom-in {
+  border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+}
+
+.leaflet-control-zoom-out {
+  border-radius: 0 0 var(--radius-md) var(--radius-md) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(18, 18, 26, 0.7) !important;
+  color: var(--color-text-3) !important;
+  font-size: 9px !important;
+  padding: 2px 6px !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--color-text-3) !important;
+}
+
+/* Map tile filter for dark mode */
+.leaflet-tile-pane {
+  filter: brightness(0.7) contrast(1.1) saturate(0.8) hue-rotate(10deg);
+}
+
+/* Leaflet popup override */
+.leaflet-popup-content-wrapper {
+  background: rgba(18, 18, 26, 0.95) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.leaflet-popup-content {
+  margin: var(--space-3) var(--space-4) !important;
+  color: var(--color-text) !important;
+  font-family: var(--font-family) !important;
+  font-size: var(--text-sm) !important;
+  line-height: var(--line-normal) !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(18, 18, 26, 0.95) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+.leaflet-popup-close-button {
+  color: var(--color-text-3) !important;
+  font-size: 18px !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: var(--color-text) !important;
+}
+
+/* ─── Vehicle Sheet Layout ─── */
+.sheet-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.sheet-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet-info h3 {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+}
+
+.sheet-info p {
+  font-size: var(--text-sm);
+  color: var(--color-text-3);
+}
+
+.sheet-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+}
+
+.sheet-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.sheet-stat-val {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+}
+
+.sheet-stat-lbl {
+  font-size: var(--text-xs);
+  color: var(--color-text-3);
+}
+
+.sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ─── Find Mechanic Button (Vehicle Sheet) ─── */
+.btn-mechanic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.15));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #c4b5fd;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  margin-top: var(--space-2);
+  transition: all var(--duration-normal) var(--ease-spring);
+}
+
+.btn-mechanic:hover,
+.btn-mechanic:active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.25));
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: scale(0.98);
+}

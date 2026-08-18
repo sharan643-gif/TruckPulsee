@@ -1,0 +1,175 @@
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS — Physics-based transitions and keyframes
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Splash Screen ─── */
+@keyframes splash-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes loader-slide {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+/* ─── Float (splash logo, hero vehicles) ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-8px) rotate(1deg); }
+  50%      { transform: translateY(-16px) rotate(0deg); }
+  75%      { transform: translateY(-8px) rotate(-1deg); }
+}
+
+/* ─── Grid Drift (hero background) ─── */
+@keyframes grid-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+/* ─── Pulse Glow ─── */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+  }
+}
+
+/* ─── Map Marker Pulse Ring ─── */
+@keyframes marker-pulse {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  50%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
+/* ─── Critical Marker Pulse ─── */
+@keyframes pulse-critical {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.1); }
+}
+
+/* ─── Glow Pulse (critical markers) ─── */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* ─── Route Dash Animation ─── */
+@keyframes route-dash {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 100; }
+}
+
+/* ─── Mechanic Pin Drop ─── */
+@keyframes mechanic-drop {
+  0%   { transform: translateY(-30px) scale(0.5); opacity: 0; }
+  60%  { transform: translateY(4px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ─── Mechanic Pin Glow ─── */
+@keyframes mechanic-glow {
+  0%, 100% { box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4); }
+  50%      { box-shadow: 0 2px 16px rgba(139, 92, 246, 0.6); }
+}
+
+/* ─── Slide In from Bottom ─── */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ─── Slide In from Top ─── */
+@keyframes slide-down {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ─── Fade In ─── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Scale In (spring feel) ─── */
+@keyframes scale-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ─── Shimmer loading placeholder ─── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ─── Inertia scroll snapping for carousels ─── */
+.inertia-scroll {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.inertia-scroll::-webkit-scrollbar { display: none; }
+
+.inertia-scroll > * {
+  scroll-snap-align: start;
+}
+
+/* ─── Page transition classes (applied by JS) ─── */
+.page-enter {
+  animation: scale-in var(--duration-slow) var(--ease-spring) both;
+}
+
+.page-exit {
+  animation: fade-in var(--duration-normal) var(--ease-out) reverse both;
+}
+
+/* ─── Stagger children animation helper ─── */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: stagger-item var(--duration-slow) var(--ease-spring) forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 60ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 180ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 360ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 420ms; }
+
+@keyframes stagger-item {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Reduce motion preference ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

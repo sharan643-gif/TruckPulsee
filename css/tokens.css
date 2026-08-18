@@ -1,0 +1,126 @@
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS — TruckPulse
+   Apple-inspired dark theme with liquid glass aesthetic
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Color Palette ─── */
+  --color-bg:          #0a0a0f;
+  --color-bg-elevated: #12121a;
+  --color-surface:     #1a1a25;
+  --color-surface-2:   #222230;
+
+  --color-text:        #f5f5f7;
+  --color-text-2:      #a1a1aa;
+  --color-text-3:      #71717a;
+
+  /* Brand Gradients */
+  --color-green:       #6ee7b7;
+  --color-blue:        #3b82f6;
+  --color-teal:        #34d399;
+  --color-yellow:      #fbbf24;
+  --color-orange:      #f59e0b;
+  --color-red:         #ef4444;
+  --color-purple:      #a78bfa;
+  --color-pink:        #f472b6;
+
+  /* Status Colors */
+  --status-good:       #34d399;
+  --status-warning:    #fbbf24;
+  --status-critical:   #ef4444;
+  --status-info:       #60a5fa;
+
+  /* ─── Glass Effect ─── */
+  --glass-bg:          rgba(255, 255, 255, 0.05);
+  --glass-bg-hover:    rgba(255, 255, 255, 0.08);
+  --glass-bg-active:   rgba(255, 255, 255, 0.12);
+  --glass-border:      rgba(255, 255, 255, 0.1);
+  --glass-border-hover:rgba(255, 255, 255, 0.18);
+  --glass-blur:        20px;
+  --glass-blur-heavy:  40px;
+
+  /* ─── Gradients ─── */
+  --gradient-brand:    linear-gradient(135deg, #6ee7b7, #3b82f6);
+  --gradient-warm:     linear-gradient(135deg, #fbbf24, #ef4444);
+  --gradient-cool:     linear-gradient(135deg, #34d399, #3b82f6);
+  --gradient-surface:  linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+
+  /* ─── Typography ─── */
+  --font-family:       -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:         'SF Mono', SFMono-Regular, 'Fira Code', monospace;
+
+  --text-xs:           0.6875rem;   /* 11px */
+  --text-sm:           0.8125rem;   /* 13px */
+  --text-base:         0.9375rem;   /* 15px */
+  --text-md:           1.0625rem;   /* 17px */
+  --text-lg:           1.25rem;     /* 20px */
+  --text-xl:           1.5rem;      /* 24px */
+  --text-2xl:          2rem;        /* 32px */
+  --text-3xl:          2.5rem;      /* 40px */
+  --text-4xl:          3.25rem;     /* 52px */
+
+  --weight-regular:    400;
+  --weight-medium:     500;
+  --weight-semibold:   600;
+  --weight-bold:       700;
+
+  --line-tight:        1.15;
+  --line-normal:       1.45;
+  --line-relaxed:      1.65;
+
+  /* ─── Spacing ─── */
+  --space-1:           4px;
+  --space-2:           8px;
+  --space-3:           12px;
+  --space-4:           16px;
+  --space-5:           20px;
+  --space-6:           24px;
+  --space-8:           32px;
+  --space-10:          40px;
+  --space-12:          48px;
+  --space-16:          64px;
+
+  /* ─── Radii ─── */
+  --radius-sm:         8px;
+  --radius-md:         12px;
+  --radius-lg:         16px;
+  --radius-xl:         20px;
+  --radius-2xl:        24px;
+  --radius-full:       9999px;
+
+  /* ─── Shadows ─── */
+  --shadow-sm:         0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md:         0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg:         0 8px 30px rgba(0,0,0,0.5);
+  --shadow-xl:         0 16px 50px rgba(0,0,0,0.6);
+  --shadow-glow-green: 0 0 20px rgba(110,231,183,0.3);
+  --shadow-glow-blue:  0 0 20px rgba(59,130,246,0.3);
+  --shadow-glow-red:   0 0 20px rgba(239,68,68,0.3);
+
+  /* ─── Z-Index ─── */
+  --z-base:            1;
+  --z-overlay:         10;
+  --z-nav:             100;
+  --z-sheet:           200;
+  --z-modal:           300;
+  --z-toast:           400;
+  --z-splash:          500;
+
+  /* ─── Transitions ─── */
+  --ease-spring:       cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:          cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:       cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bounce:       cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --duration-fast:     150ms;
+  --duration-normal:   300ms;
+  --duration-slow:     500ms;
+  --duration-slower:   800ms;
+
+  /* ─── Layout ─── */
+  --nav-height:        72px;
+  --status-height:     48px;
+  --safe-bottom:       env(safe-area-inset-bottom, 0px);
+  --safe-top:          env(safe-area-inset-top, 0px);
+  --content-max:       480px;
+}

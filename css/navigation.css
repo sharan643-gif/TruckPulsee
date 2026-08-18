@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION — Bottom pill-shaped liquid glass nav bar
+   ═══════════════════════════════════════════════════════════════ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - var(--space-6));
+  max-width: calc(var(--content-max) - var(--space-6));
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--space-2) var(--space-2);
+  padding-bottom: calc(var(--space-2) + var(--safe-bottom));
+  border-radius: var(--radius-full);
+  background: rgba(18, 18, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+              0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  z-index: var(--z-nav);
+  overflow: hidden;
+}
+
+/* Animated highlight pill behind active tab */
+.nav-highlight {
+  position: absolute;
+  top: var(--space-1);
+  left: var(--space-2);
+  height: calc(100% - var(--space-2) - var(--safe-bottom));
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform var(--duration-slow) var(--ease-spring),
+              width var(--duration-slow) var(--ease-spring);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ─── Nav Item ─── */
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: none;
+  color: var(--color-text-3);
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition: color var(--duration-normal) var(--ease-out);
+  border-radius: var(--radius-full);
+  min-width: 52px;
+  flex: 1;
+}
+
+.nav-item span {
+  font-family: var(--font-family);
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.nav-item svg {
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.nav-item.active {
+  color: var(--color-text);
+}
+
+.nav-item.active svg {
+  transform: scale(1.1) translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(110, 231, 183, 0.4));
+}
+
+/* ─── Nav Badge ─── */
+.nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--color-red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+/* ─── Tab press animation ─── */
+.nav-item:active svg {
+  transform: scale(0.85);
+}
+
+/* ─── Haptic feedback indicator ─── */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle at center, rgba(110, 231, 183, 0.15), transparent 70%);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity var(--duration-fast), transform var(--duration-normal) var(--ease-spring);
+}
+
+.nav-item.active::after {
+  opacity: 1;
+  transform: scale(1);
+}

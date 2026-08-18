@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>TruckPulse — AI Predictive Health Monitor</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/glass.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/charts.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/desktop.css">
+  <link rel="stylesheet" href="css/simulator.css">
+  <link rel="stylesheet" href="css/comparison.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SPLASH SCREEN
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="splash" class="splash">
+    <div class="splash-logo">
+      <svg class="splash-icon" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="55" stroke="url(#splash-grad)" stroke-width="2" opacity="0.3"/>
+        <path d="M35 65 L55 45 L80 45 L95 60 L80 75 L55 75 Z" fill="url(#splash-grad)" opacity="0.8"/>
+        <circle cx="48" cy="78" r="6" fill="url(#splash-grad)" opacity="0.6"/>
+        <circle cx="78" cy="78" r="6" fill="url(#splash-grad)" opacity="0.6"/>
+        <defs>
+          <linearGradient id="splash-grad" x1="0" y1="0" x2="120" y2="120">
+            <stop offset="0%" stop-color="#6ee7b7"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1 class="splash-title">TruckPulse</h1>
+      <p class="splash-sub">Loading fleet intelligence…</p>
+    </div>
+    <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAIN APP SHELL
+       ═══════════════════════════════════════════════════════════════ -->
+  <div id="app" class="app" style="display:none;">
+
+    <!-- ─── DESKTOP SIDEBAR (hidden on mobile) ─── -->
+    <aside class="desktop-sidebar" id="desktopSidebar">
+      <div class="sidebar-brand">
+        <svg class="sidebar-logo" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="url(#sb-grad)" stroke-width="1.5" opacity="0.4"/>
+          <path d="M12 22 L18 16 L26 16 L31 21 L26 26 L18 26 Z" fill="url(#sb-grad)" opacity="0.9"/>
+          <circle cx="16" cy="27.5" r="2.2" fill="url(#sb-grad)" opacity="0.7"/>
+          <circle cx="28" cy="27.5" r="2.2" fill="url(#sb-grad)" opacity="0.7"/>
+          <defs><linearGradient id="sb-grad" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs>
+        </svg>
+        <span class="sidebar-brand-text">TruckPulse</span>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <button class="sidebar-item active" data-page="home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="sidebar-item" data-page="fleet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Fleet Map</span>
+        </button>
+        <button class="sidebar-item" data-page="alerts">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span>Alerts</span>
+          <span class="sidebar-badge" id="sidebarAlertsBadge">12</span>
+        </button>
+        <button class="sidebar-item" data-page="fuel">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+          <span>Fuel Advisor</span>
+        </button>
+        <button class="sidebar-item" data-page="settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">AK</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">Amit Kumar</span>
+            <span class="sidebar-user-role">Fleet Manager</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── MAIN CONTENT AREA ─── -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: HOME
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-home" class="page page-home active">
+        <div class="hero">
+          <div class="hero-bg-grid"></div>
+          <div class="hero-content">
+            <div class="hero-badge glass-pill">
+              <span class="pulse-dot"></span>
+              AI-Powered Fleet Intelligence
+            </div>
+            <h1 class="hero-title">
+              Predictive Health<br>
+              <span class="gradient-text">Monitor</span> for<br>
+              Commercial Fleets
+            </h1>
+            <p class="hero-desc">Catching failures before they happen. Real-time engine diagnostics, AI-driven alerts, and proactive maintenance scheduling.</p>
+            <button class="btn-primary glass-btn" id="heroCTA">
+              <span>Explore Fleet</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="hero-fleet" id="heroFleet"></div>
+        </div>
+
+        <div class="section-pad">
+          <div class="stat-row">
+            <div class="stat-card glass-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #6ee7b7, #3b82f6);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="statFleet">47</span>
+                <span class="stat-label">Active Vehicles</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="statAlerts">12</span>
+                <span class="stat-label">Active Alerts</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #34d399, #10b981);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">94%</span>
+                <span class="stat-label">Fleet Uptime</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>Recent Alerts</h2>
+            <button class="btn-ghost" id="viewAllAlerts">View All →</button>
+          </div>
+          <div class="alert-preview-list" id="alertPreviewList"></div>
+
+          <div class="section-header" style="margin-top:24px;">
+            <h2>Fleet Health Trend</h2>
+            <span class="badge-green">+2.3% this week</span>
+          </div>
+          <div class="health-trend-chart glass-card" id="healthTrendChart">
+            <canvas id="healthTrendCanvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: FLEET MAP
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-fleet" class="page page-fleet">
+        <div class="fleet-split">
+          <!-- Left: Map -->
+          <div class="fleet-map-pane">
+            <div class="map-container" id="mapContainer">
+              <div id="fleetMap" class="fleet-map"></div>
+              <div class="map-controls">
+                <button class="map-ctrl-btn glass-pill" id="mapFilterBtn" title="Filter">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+                </button>
+                <button class="map-ctrl-btn glass-pill" id="mapCenterBtn" title="Center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m0-10.14l2.83 2.83m4.48 4.48l2.83 2.83"/></svg>
+                </button>
+              </div>
+              <!-- Vehicle sheet (mobile bottom drawer) -->
+              <div class="vehicle-sheet glass-sheet" id="vehicleSheet" style="display:none;">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                  <div class="vehicle-avatar" id="sheetAvatar">T-01</div>
+                  <div class="sheet-info">
+                    <h3 id="sheetName">Tata Prima 4040</h3>
+                    <p id="sheetPlate">MH-12-AB-1234</p>
+                  </div>
+                  <div class="health-badge" id="sheetHealth">
+                    <span class="health-score">87</span>
+                    <span class="health-label">Good</span>
+                  </div>
+                </div>
+                <div class="sheet-stats">
+                  <div class="sheet-stat"><span class="sheet-stat-val" id="sheetRpm">1,842</span><span class="sheet-stat-lbl">RPM</span></div>
+                  <div class="sheet-stat"><span class="sheet-stat-val" id="sheetTemp">88°C</span><span class="sheet-stat-lbl">Coolant</span></div>
+                  <div class="sheet-stat"><span class="sheet-stat-val" id="sheetVolt">13.8V</span><span class="sheet-stat-lbl">Voltage</span></div>
+                  <div class="sheet-stat"><span class="sheet-stat-val" id="sheetVib">0.3g</span><span class="sheet-stat-lbl">Vibration</span></div>
+                </div>
+                <div class="sheet-actions">
+                  <button class="btn-primary glass-btn" id="sheetDetailBtn">Live Feed →</button>
+                  <button class="btn-mechanic glass-btn" id="sheetFindMechanic" style="display:none;">
+                    <span>🔧</span>
+                    <span>Find Mechanic</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Fleet sidebar (desktop only) -->
+          <div class="fleet-sidebar" id="fleetSidebar">
+            <div class="fleet-sidebar-header">
+              <h2>Fleet Overview</h2>
+              <button class="btn-secondary glass-btn btn-sm" id="btnCompare">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M8 3H3v5M3 16v5h5M21 16v5h-5"/></svg>
+                Compare
+              </button>
+            </div>
+            <div class="fleet-search">
+              <input type="text" placeholder="Search vehicle…" class="glass-input" id="vehicleSearch">
+            </div>
+            <div class="fleet-list" id="fleetList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter panel (mobile) -->
+        <div class="filter-panel glass-panel" id="filterPanel" style="display:none;">
+          <div class="filter-header">
+            <h3>Filter Vehicles</h3>
+            <button class="btn-icon" id="filterClose">✕</button>
+          </div>
+          <div class="filter-options">
+            <label class="filter-chip active" data-filter="all">All Vehicles</label>
+            <label class="filter-chip" data-filter="good"><span class="dot-green"></span> Healthy</label>
+            <label class="filter-chip" data-filter="warning"><span class="dot-yellow"></span> Warning</label>
+            <label class="filter-chip" data-filter="critical"><span class="dot-red"></span> Critical</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: VEHICLE DETAIL / LIVE FEED
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-detail" class="page page-detail" style="display:none;">
+        <div class="detail-header">
+          <button class="btn-back" id="detailBack">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back
+          </button>
+          <div class="detail-vehicle-info">
+            <h2 id="detailTitle">Tata Prima 4040</h2>
+            <p id="detailPlate">MH-12-AB-1234</p>
+          </div>
+          <div class="health-badge large" id="detailHealthBadge">
+            <span class="health-score">87</span>
+            <span class="health-label">Good</span>
+          </div>
+          <div class="live-badge" id="liveBadge">
+            <span class="live-dot"></span> LIVE
+          </div>
+        </div>
+
+        <div class="detail-content">
+          <!-- ═══ LIVE SIMULATION PANEL ═══ -->
+          <div class="live-panel" id="livePanel">
+            <div class="live-header">
+              <h3>Live Engine Feed</h3>
+              <div class="live-status">
+                <span class="live-dot"></span>
+                <span id="liveUpdateRate">Updating every 1s</span>
+              </div>
+            </div>
+
+            <!-- Gauges Row 1 -->
+            <div class="gauges-row">
+              <div class="gauge-card glass-card" data-param="rpm">
+                <canvas class="gauge-canvas" id="gaugeRpm" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeRpmVal">0</span>
+                  <span class="gauge-unit">RPM</span>
+                  <span class="gauge-label">Engine Speed</span>
+                </div>
+                <div class="gauge-range"><span>0</span><span>3,000</span></div>
+              </div>
+              <div class="gauge-card glass-card" data-param="temp">
+                <canvas class="gauge-canvas" id="gaugeTemp" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeTempVal">0</span>
+                  <span class="gauge-unit">°C</span>
+                  <span class="gauge-label">Coolant Temp</span>
+                </div>
+                <div class="gauge-range"><span>40</span><span>120</span></div>
+              </div>
+              <div class="gauge-card glass-card" data-param="voltage">
+                <canvas class="gauge-canvas" id="gaugeVoltage" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeVoltageVal">0</span>
+                  <span class="gauge-unit">V</span>
+                  <span class="gauge-label">Battery Voltage</span>
+                </div>
+                <div class="gauge-range"><span>10</span><span>16</span></div>
+              </div>
+              <div class="gauge-card glass-card" data-param="vibration">
+                <canvas class="gauge-canvas" id="gaugeVibration" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeVibrationVal">0</span>
+                  <span class="gauge-unit">g</span>
+                  <span class="gauge-label">Vibration</span>
+                </div>
+                <div class="gauge-range"><span>0</span><span>2.0</span></div>
+              </div>
+            </div>
+
+            <!-- Gauges Row 2 -->
+            <div class="gauges-row">
+              <div class="gauge-card glass-card" data-param="oilPressure">
+                <canvas class="gauge-canvas" id="gaugeOilPressure" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeOilPressureVal">0</span>
+                  <span class="gauge-unit">PSI</span>
+                  <span class="gauge-label">Oil Pressure</span>
+                </div>
+                <div class="gauge-range"><span>20</span><span>80</span></div>
+              </div>
+              <div class="gauge-card glass-card" data-param="fuelRate">
+                <canvas class="gauge-canvas" id="gaugeFuelRate" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeFuelRateVal">0</span>
+                  <span class="gauge-unit">L/h</span>
+                  <span class="gauge-label">Fuel Rate</span>
+                </div>
+                <div class="gauge-range"><span>0</span><span>40</span></div>
+              </div>
+              <div class="gauge-card glass-card" data-param="engineLoad">
+                <canvas class="gauge-canvas" id="gaugeEngineLoad" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeEngineLoadVal">0</span>
+                  <span class="gauge-unit">%</span>
+                  <span class="gauge-label">Engine Load</span>
+                </div>
+                <div class="gauge-range"><span>0</span><span>100</span></div>
+              </div>
+              <div class="gauge-card glass-card" data-param="turboBoost">
+                <canvas class="gauge-canvas" id="gaugeTurboBoost" width="160" height="160"></canvas>
+                <div class="gauge-info">
+                  <span class="gauge-value" id="gaugeTurboBoostVal">0</span>
+                  <span class="gauge-unit">bar</span>
+                  <span class="gauge-label">Turbo Boost</span>
+                </div>
+                <div class="gauge-range"><span>0</span><span>3.0</span></div>
+              </div>
+            </div>
+
+            <!-- Status Indicators Row -->
+            <div class="status-row-live">
+              <div class="status-indicator glass-card">
+                <span class="status-ind-icon" id="siIntake">🟢</span>
+                <span class="status-ind-label">Intake Air</span>
+                <span class="status-ind-val" id="siIntakeVal">32°C</span>
+              </div>
+              <div class="status-indicator glass-card">
+                <span class="status-ind-icon" id="siExhaust">🟢</span>
+                <span class="status-ind-label">Exhaust Temp</span>
+                <span class="status-ind-val" id="siExhaustVal">340°C</span>
+              </div>
+              <div class="status-indicator glass-card">
+                <span class="status-ind-icon" id="siOilTemp">🟢</span>
+                <span class="status-ind-label">Oil Temp</span>
+                <span class="status-ind-val" id="siOilTempVal">95°C</span>
+              </div>
+              <div class="status-indicator glass-card">
+                <span class="status-ind-icon" id="siDEF">🟢</span>
+                <span class="status-ind-label">DEF Level</span>
+                <span class="status-ind-val" id="siDEFVal">72%</span>
+              </div>
+              <div class="status-indicator glass-card">
+                <span class="status-ind-icon" id="siSpeed">🟢</span>
+                <span class="status-ind-label">Speed</span>
+                <span class="status-ind-val" id="siSpeedVal">0 km/h</span>
+              </div>
+              <div class="status-indicator glass-card">
+                <span class="status-ind-icon" id="siGPS">🟢</span>
+                <span class="status-ind-label">GPS Signal</span>
+                <span class="status-ind-val" id="siGPSVal">Strong</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Engine Parameter Bars -->
+          <div class="detail-card glass-card">
+            <h3 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Engine Parameters (Avg. 1h)
+            </h3>
+            <div class="param-grid">
+              <div class="param-item">
+                <span class="param-label">RPM Drift</span>
+                <div class="param-bar-track"><div class="param-bar" id="paramRpm" style="width:72%; background: linear-gradient(90deg, #6ee7b7, #3b82f6);"></div></div>
+                <span class="param-val">1,842 RPM</span>
+                <span class="param-trend positive">↑ 3.2%</span>
+              </div>
+              <div class="param-item">
+                <span class="param-label">Coolant Trend</span>
+                <div class="param-bar-track"><div class="param-bar" id="paramCoolant" style="width:65%; background: linear-gradient(90deg, #6ee7b7, #fbbf24);"></div></div>
+                <span class="param-val">88°C</span>
+                <span class="param-trend neutral">→ stable</span>
+              </div>
+              <div class="param-item">
+                <span class="param-label">Voltage Sag</span>
+                <div class="param-bar-track"><div class="param-bar" id="paramVoltage" style="width:88%; background: linear-gradient(90deg, #6ee7b7, #34d399);"></div></div>
+                <span class="param-val">13.8V</span>
+                <span class="param-trend positive">↑ 0.1V</span>
+              </div>
+              <div class="param-item">
+                <span class="param-label">Vibration Sig.</span>
+                <div class="param-bar-track"><div class="param-bar" id="paramVibration" style="width:35%; background: linear-gradient(90deg, #fbbf24, #ef4444);"></div></div>
+                <span class="param-val">0.3g</span>
+                <span class="param-trend negative">↑ 12%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RPM History Chart -->
+          <div class="detail-card glass-card">
+            <h3 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              RPM History (24h)
+            </h3>
+            <div class="chart-container"><canvas id="rpmChart"></canvas></div>
+          </div>
+
+          <!-- Temperature Chart -->
+          <div class="detail-card glass-card">
+            <h3 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>
+              Coolant Temperature (24h)
+            </h3>
+            <div class="chart-container"><canvas id="tempChart"></canvas></div>
+          </div>
+
+          <!-- Vibration Chart -->
+          <div class="detail-card glass-card">
+            <h3 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M2 12h2l3-9 4 18 4-12 3 6h4"/></svg>
+              Vibration Signature (Live)
+            </h3>
+            <div class="chart-container"><canvas id="vibrationChart"></canvas></div>
+          </div>
+
+          <!-- AI Prediction -->
+          <div class="detail-card glass-card ai-card">
+            <div class="ai-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              AI Prediction
+            </div>
+            <p class="ai-text">Vibration signature shows <strong>early bearing wear pattern</strong> in the rear differential. Recommend inspection within <strong>72 hours</strong>. Confidence: <span class="gradient-text">91%</span></p>
+            <div class="ai-actions">
+              <button class="btn-secondary glass-btn">Schedule Inspection</button>
+              <button class="btn-ghost">Dismiss</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: ALERTS
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-alerts" class="page page-alerts">
+        <div class="page-header">
+          <h1>Alerts</h1>
+          <div class="header-actions">
+            <button class="btn-ghost btn-sm" id="markAllRead">Mark All Read</button>
+          </div>
+        </div>
+        <div class="alert-filters">
+          <button class="filter-tab active" data-alert-filter="all">All</button>
+          <button class="filter-tab" data-alert-filter="critical"><span class="dot-red"></span> Critical</button>
+          <button class="filter-tab" data-alert-filter="warning"><span class="dot-yellow"></span> Warning</button>
+          <button class="filter-tab" data-alert-filter="info"><span class="dot-blue"></span> Info</button>
+        </div>
+        <div class="alerts-list" id="alertsList"></div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: FUEL ADVISOR
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-fuel" class="page page-fuel">
+        <div class="page-header">
+          <h1>Fuel Advisor</h1>
+          <span class="badge-green">Saving ₹2.4L/month</span>
+        </div>
+        <div class="fuel-map-container">
+          <div id="fuelMap" class="fuel-map"></div>
+          <div class="fuel-overlay glass-card">
+            <div class="fuel-stat-row">
+              <div class="fuel-stat"><span class="fuel-stat-val">18.2</span><span class="fuel-stat-lbl">km/L avg</span></div>
+              <div class="fuel-stat"><span class="fuel-stat-val">+14%</span><span class="fuel-stat-lbl">vs last month</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-pad">
+          <div class="section-header"><h2>Route Suggestions</h2></div>
+          <div class="route-list" id="routeList"></div>
+          <div class="section-header" style="margin-top:24px;"><h2>Efficiency Tips</h2></div>
+          <div class="tips-list" id="tipsList"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: MECHANIC LOCATOR
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-mechanics" class="page page-mechanics" style="display:none;">
+        <div class="page-header">
+          <button class="btn-back" id="mechanicsBack">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back
+          </button>
+          <h1>Mechanic Locator</h1>
+        </div>
+        <div class="mechanics-map-container">
+          <div id="mechanicsMap" class="mechanics-map"></div>
+        </div>
+        <div class="section-pad">
+          <div class="section-header">
+            <h2>Nearby Verified Mechanics</h2>
+            <span class="badge-info">12 within 25km</span>
+          </div>
+          <div class="mechanics-list" id="mechanicsList"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: SETTINGS / PROFILE
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-settings" class="page page-settings">
+        <div class="page-header"><h1>Profile</h1></div>
+        <div class="profile-card glass-card">
+          <div class="profile-avatar"><span>AK</span></div>
+          <div class="profile-info">
+            <h3>Amit Kumar</h3>
+            <p>Fleet Manager • Tata Logistics</p>
+          </div>
+          <button class="btn-ghost btn-sm">Edit</button>
+        </div>
+        <div class="settings-section">
+          <h3 class="settings-label">Subscription</h3>
+          <div class="subscription-card glass-card">
+            <div class="sub-tier"><span class="sub-name gradient-text">Pro Fleet</span><span class="sub-price">₹4,999/mo</span></div>
+            <div class="sub-features">
+              <span class="sub-feature">✓ 50 vehicles</span>
+              <span class="sub-feature">✓ AI predictions</span>
+              <span class="sub-feature">✓ WhatsApp alerts</span>
+              <span class="sub-feature">✓ Fuel advisor</span>
+            </div>
+            <button class="btn-secondary glass-btn" style="width:100%; margin-top:12px;">Manage Subscription</button>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3 class="settings-label">Settings</h3>
+          <div class="settings-list glass-card">
+            <div class="settings-item"><span class="settings-icon">🔔</span><span>Notifications</span><div class="toggle active" id="toggleNotifications"><div class="toggle-thumb"></div></div></div>
+            <div class="settings-item"><span class="settings-icon">📱</span><span>WhatsApp Alerts</span><div class="toggle active" id="toggleWhatsApp"><div class="toggle-thumb"></div></div></div>
+            <div class="settings-item"><span class="settings-icon">🌙</span><span>Dark Mode</span><div class="toggle active" id="toggleDarkMode"><div class="toggle-thumb"></div></div></div>
+            <div class="settings-item"><span class="settings-icon">📍</span><span>Location Services</span><div class="toggle active" id="toggleLocation"><div class="toggle-thumb"></div></div></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3 class="settings-label">Admin</h3>
+          <div class="settings-list glass-card">
+            <div class="settings-item btn-settings-item" id="btnAdminDashboard"><span class="settings-icon">⚙️</span><span>Admin Dashboard</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="settings-item btn-settings-item" id="btnMechanics"><span class="settings-icon">🔧</span><span>Mechanic Locator</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="settings-item btn-settings-item"><span class="settings-icon">📊</span><span>Fleet Reports</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+            <div class="settings-item btn-settings-item"><span class="settings-icon">🔐</span><span>Data & Privacy</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
+        </div>
+        <p class="settings-version">TruckPulse v2.2.0 • Built with ❤️</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: ADMIN DASHBOARD
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-admin" class="page page-admin" style="display:none;">
+        <div class="page-header">
+          <button class="btn-back" id="adminBack">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back
+          </button>
+          <h1>Admin Dashboard</h1>
+        </div>
+        <div class="section-pad" style="padding-bottom:0;">
+          <div class="admin-stats">
+            <div class="admin-stat glass-card"><span class="admin-stat-val">47</span><span class="admin-stat-lbl">Total Vehicles</span></div>
+            <div class="admin-stat glass-card"><span class="admin-stat-val">128</span><span class="admin-stat-lbl">Users</span></div>
+            <div class="admin-stat glass-card"><span class="admin-stat-val">₹4.2L</span><span class="admin-stat-lbl">Monthly Revenue</span></div>
+            <div class="admin-stat glass-card"><span class="admin-stat-val">89%</span><span class="admin-stat-lbl">Retention</span></div>
+          </div>
+        </div>
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-admin-tab="fleet">Fleet Mgmt</button>
+          <button class="admin-tab" data-admin-tab="products">Products</button>
+          <button class="admin-tab" data-admin-tab="subscriptions">Subscriptions</button>
+        </div>
+        <div class="admin-content section-pad" id="adminFleet">
+          <div class="admin-table glass-card">
+            <div class="table-header"><span>Vehicle</span><span>Health</span><span>Status</span><span>Action</span></div>
+            <div class="table-body" id="adminFleetTable"></div>
+          </div>
+          <button class="btn-primary glass-btn" style="width:100%; margin-top:16px;" id="btnAddVehicle">+ Add Vehicle</button>
+        </div>
+        <div class="admin-content section-pad" id="adminProducts" style="display:none;">
+          <div class="admin-form glass-card">
+            <h3>Add New Product</h3>
+            <div class="form-group"><label>Product Name</label><input type="text" class="glass-input" placeholder="e.g., TruckPulse Pro Sensor"></div>
+            <div class="form-group"><label>Description</label><textarea class="glass-input glass-textarea" placeholder="Describe the product…"></textarea></div>
+            <div class="form-group"><label>Price (₹)</label><input type="number" class="glass-input" placeholder="4999"></div>
+            <div class="form-group"><label>Category</label><select class="glass-input glass-select"><option>Sensors</option><option>Subscriptions</option><option>Accessories</option><option>Services</option></select></div>
+            <button class="btn-primary glass-btn" style="width:100%;">Save Product</button>
+          </div>
+        </div>
+        <div class="admin-content section-pad" id="adminSubscriptions" style="display:none;">
+          <div class="sub-plans">
+            <div class="sub-plan glass-card"><span class="plan-name">Starter</span><span class="plan-price">₹999/mo</span><ul class="plan-features"><li>10 vehicles</li><li>Basic alerts</li><li>Email support</li></ul><span class="plan-users">34 subscribers</span></div>
+            <div class="sub-plan glass-card highlighted"><span class="plan-name gradient-text">Pro Fleet</span><span class="plan-price">₹4,999/mo</span><ul class="plan-features"><li>50 vehicles</li><li>AI predictions</li><li>WhatsApp alerts</li><li>Fuel advisor</li></ul><span class="plan-users">89 subscribers</span></div>
+            <div class="sub-plan glass-card"><span class="plan-name">Enterprise</span><span class="plan-price">₹19,999/mo</span><ul class="plan-features"><li>Unlimited vehicles</li><li>Full AI suite</li><li>Custom integrations</li><li>Dedicated support</li></ul><span class="plan-users">5 subscribers</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           PAGE: VEHICLE COMPARISON
+           ═══════════════════════════════════════════════════════════════ -->
+      <section id="page-compare" class="page page-compare" style="display:none;">
+        <div class="compare-header">
+          <button class="btn-back" id="compareBack">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back
+          </button>
+          <h1>Compare Vehicles</h1>
+          <div class="compare-selectors">
+            <div class="compare-vehicle-select">
+              <label>Vehicle A</label>
+              <select class="glass-input glass-select compare-select" id="compareSelectA"></select>
+            </div>
+            <span class="compare-vs">VS</span>
+            <div class="compare-vehicle-select">
+              <label>Vehicle B</label>
+              <select class="glass-input glass-select compare-select" id="compareSelectB"></select>
+            </div>
+            <button class="compare-swap-btn" id="compareSwapBtn" title="Swap vehicles">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="compare-body">
+          <!-- Vehicle info bars -->
+          <div class="compare-vehicle-bars">
+            <div class="compare-vehicle-bar a">
+              <div class="vehicle-avatar good">T-01</div>
+              <div class="compare-vb-info">
+                <div class="compare-vb-name">—</div>
+                <div class="compare-vb-plate">—</div>
+              </div>
+              <span class="compare-vb-health">—</span>
+            </div>
+            <div class="compare-divider">⚡</div>
+            <div class="compare-vehicle-bar b">
+              <div class="vehicle-avatar warning">T-04</div>
+              <div class="compare-vb-info">
+                <div class="compare-vb-name">—</div>
+                <div class="compare-vb-plate">—</div>
+              </div>
+              <span class="compare-vb-health">—</span>
+            </div>
+          </div>
+
+          <!-- Live gauge grid -->
+          <div id="compareGaugeGrid"></div>
+
+          <!-- Summary table -->
+          <div class="compare-summary">
+            <h3>Comparison Summary</h3>
+            <div class="glass-card" style="overflow-x:auto; padding:0;">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th class="col-a">Vehicle A</th>
+                    <th>Delta</th>
+                    <th class="col-b">Vehicle B</th>
+                  </tr>
+                </thead>
+                <tbody id="compareSummaryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /main-content -->
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         BOTTOM NAVIGATION — Mobile only
+         ═══════════════════════════════════════════════════════════════ -->
+    <nav class="bottom-nav" id="bottomNav">
+      <div class="nav-highlight" id="navHighlight"></div>
+      <button class="nav-item active" data-page="home" title="Home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-page="fleet" title="Fleet Map">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Fleet</span>
+      </button>
+      <button class="nav-item" data-page="alerts" title="Alerts">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span>Alerts</span>
+        <span class="nav-badge" id="alertsBadge">12</span>
+      </button>
+      <button class="nav-item" data-page="fuel" title="Fuel Advisor">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+        <span>Fuel</span>
+      </button>
+      <button class="nav-item" data-page="settings" title="Profile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/fuel.js"></script>
+  <script src="js/mechanics.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/simulator.js"></script>
+  <script src="js/comparison.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
